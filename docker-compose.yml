@@ -1,0 +1,138 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coopiyo_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+      - ./docker/php/php.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - coopiyo
+    depends_on:
+      - pgsql
+      - redis
+
+  nginx:
+    image: nginx:alpine
+    container_name: coopiyo_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+    networks:
+      - coopiyo
+    depends_on:
+      - app
+
+  pgsql:
+    image: postgres:16-alpine
+    container_name: coopiyo_pgsql
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DB_DATABASE:-coopiyo}
+      POSTGRES_USER: ${DB_USERNAME:-coopiyo}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgsql_data:/var/lib/postgresql/data
+    networks:
+      - coopiyo
+
+  redis:
+    image: redis:7-alpine
+    container_name: coopiyo_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - coopiyo
+
+  reverb:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: coopiyo_reverb
+    restart: unless-stopped
+    command: php artisan reverb:start --host=0.0.0.0 --port=8080
+    working_dir: /var/www
+    volumes:
+      - .:/var/www
+    ports:
+      - "8080:8080"
+    networks:
+      - coopiyo
+    depends_on:
+      - pgsql
+      - redis
+
+  n8n:
+    image: n8nio/n8n:latest
+    container_name: coopiyo_n8n
+    restart: unless-stopped
+    ports:
+      - "5678:5678"
+    environment:
+      - N8N_HOST=0.0.0.0
+      - N8N_PORT=5678
+      - N8N_PROTOCOL=http
+      - WEBHOOK_URL=http://n8n:5678
+    volumes:
+      - n8n_data:/home/node/.n8n
+    networks:
+      - coopiyo
+
+  qdrant:
+    image: qdrant/qdrant:latest
+    container_name: coopiyo_qdrant
+    restart: unless-stopped
+    ports:
+      - "6333:6333"
+    volumes:
+      - qdrant_data:/qdrant/storage
+    networks:
+      - coopiyo
+
+  minio:
+    image: minio/minio:latest
+    container_name: coopiyo_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    environment:
+      MINIO_ROOT_USER: ${AWS_ACCESS_KEY_ID:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${AWS_SECRET_ACCESS_KEY:-minioadmin}
+    volumes:
+      - minio_data:/data
+    networks:
+      - coopiyo
+
+  mailpit:
+    image: axllent/mailpit:latest
+    container_name: coopiyo_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - coopiyo
+
+networks:
+  coopiyo:
+    driver: bridge
+
+volumes:
+  pgsql_data:
+  redis_data:
+  n8n_data:
+  qdrant_data:
+  minio_data:
