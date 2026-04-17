@@ -1,6 +1,6 @@
 COOPIYO — Project Progress Log
 ================================
-Last updated: 2026-04-17
+Last updated: 2026-04-17 (S03 done)
 
 ================================================================
 COMPLETED TASKS
@@ -94,11 +94,51 @@ User ran:
   docker-compose up -d pgsql redis mailpit
   php artisan migrate
 
+[S03] AUTH API (branch: feature/auth-api)
+------------------------------------------
+- Installed laravel/sanctum, published config
+- Registered routes/api.php in bootstrap/app.php
+- Sanctum token expiration: 15 min (access), 30 days (refresh httpOnly cookie)
+- routes/api.php — 9 endpoints under /api/v1/auth with throttle:10,1
+
+Services:
+  - app/Services/OtpService.php — generate (6-digit, 10min, invalidates previous),
+    verify (checks expiry + used_at)
+  - app/Services/AuthService.php — register, createTokenPair, sendPasswordResetOtp,
+    resetPassword
+
+Jobs:
+  - app/Jobs/SendEmailJob.php — queued, 3 tries, 60s backoff
+
+Mail:
+  - app/Mail/OtpMail.php + resources/views/mail/otp.blade.php
+    (French HTML email for OTP verification and password reset)
+
+Form Requests (6):
+  - RegisterRequest, LoginRequest, VerifyEmailRequest, ResendOtpRequest,
+    ForgotPasswordRequest, ResetPasswordRequest
+
+Resources:
+  - app/Http/Resources/UserResource.php
+
+Controllers (9 invokable):
+  - RegisterController    POST /api/v1/auth/register
+  - LoginController       POST /api/v1/auth/login
+    (returns access token in body + refresh token in httpOnly cookie)
+  - VerifyEmailController POST /api/v1/auth/verify-email
+  - ResendOtpController   POST /api/v1/auth/resend-otp
+  - ForgotPasswordController POST /api/v1/auth/forgot-password
+  - ResetPasswordController  POST /api/v1/auth/reset-password
+  - RefreshTokenController   POST /api/v1/auth/refresh
+    (reads cookie, rotates both tokens)
+  - LogoutController      POST /api/v1/auth/logout (auth:sanctum)
+  - MeController          GET  /api/v1/auth/me    (auth:sanctum)
+
 ================================================================
 NEXT UP
 ================================================================
 
-[ ] S03 — Auth API (Sanctum tokens, register, login, OTP, refresh)
+[x] S03 — Auth API (Sanctum tokens, register, login, OTP, refresh)
 [ ] S04 — OAuth (Google/Facebook) + 2FA TOTP
 [ ] S05 — Expert module (apply, documents upload, admin validation)
 [ ] S06 — Conversations + Messages REST API
