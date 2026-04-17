@@ -1,0 +1,181 @@
+// COOPIYO — Schema Base de Donnees
+// Version 1.0 — Avril 2026
+// A coller sur https://dbdiagram.io
+
+Table users {
+  id bigint [pk, increment]
+  name varchar(150) [not null]
+  email varchar(180) [unique, not null]
+  phone varchar(20) [unique, null]
+  email_verified_at timestamp [null]
+  password varchar(255) [not null]
+  role enum('user','expert','admin') [default: 'user']
+  avatar_url varchar(255) [null]
+  language varchar(5) [default: 'fr']
+  is_active boolean [default: true]
+  remember_token varchar(100) [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table categories {
+  id bigint [pk, increment]
+  name varchar(100) [not null]
+  slug varchar(100) [unique, not null]
+  icon varchar(100) [null]
+  description text [null]
+  is_active boolean [default: true]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table experts {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  category_id bigint [ref: > categories.id, null]
+  bio text [null]
+  certifications json [null]
+  hourly_rate decimal(10,2) [null]
+  rating_avg decimal(3,2) [default: 0]
+  total_reviews int [default: 0]
+  is_available boolean [default: true]
+  validation_status enum('pending','approved','rejected') [default: 'pending']
+  validated_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table expert_documents {
+  id bigint [pk, increment]
+  expert_id bigint [ref: > experts.id, not null]
+  type enum('identity','diploma','certification','other') [not null]
+  file_url varchar(500) [not null]
+  original_name varchar(255) [null]
+  verified_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table conversations {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  expert_id bigint [ref: > experts.id, null]
+  category_id bigint [ref: > categories.id, not null]
+  status enum('open','ai','expert','closed') [default: 'open']
+  channel enum('ai','expert','hybrid') [default: 'ai']
+  rating tinyint [null]
+  closed_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table messages {
+  id bigint [pk, increment]
+  conversation_id bigint [ref: > conversations.id, not null]
+  sender_type enum('user','ai','expert') [not null]
+  sender_id bigint [null]
+  type enum('text','audio','file') [default: 'text']
+  content text [null]
+  media_url varchar(500) [null]
+  transcription text [null]
+  metadata json [null]
+  read_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (conversation_id, created_at)
+  }
+}
+
+Table reviews {
+  id bigint [pk, increment]
+  conversation_id bigint [ref: > conversations.id, unique, not null]
+  user_id bigint [ref: > users.id, not null]
+  expert_id bigint [ref: > experts.id, not null]
+  rating tinyint [not null, note: '1-5']
+  comment text [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table payments {
+  id bigint [pk, increment]
+  user_id bigint [ref: > users.id, not null]
+  conversation_id bigint [ref: > conversations.id, null]
+  amount decimal(10,2) [not null]
+  currency varchar(3) [default: 'MAD']
+  status enum('pending','completed','failed','refunded') [default: 'pending']
+  method enum('stripe','cmi') [default: 'stripe']
+  external_payment_id varchar(255) [null]
+  metadata json [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, status)
+  }
+}
+
+Table wallets {
+  id bigint [pk, increment]
+  expert_id bigint [ref: - experts.id, unique, not null]
+  balance decimal(10,2) [default: 0]
+  total_earned decimal(10,2) [default: 0]
+  total_withdrawn decimal(10,2) [default: 0]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table wallet_transactions {
+  id bigint [pk, increment]
+  wallet_id bigint [ref: > wallets.id, not null]
+  type enum('credit','debit','withdrawal') [not null]
+  amount decimal(10,2) [not null]
+  description varchar(255) [null]
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table notifications {
+  id uuid [pk]
+  user_id bigint [ref: > users.id, not null]
+  type varchar(255) [not null]
+  title varchar(255) [not null]
+  body text [null]
+  data json [null]
+  read_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    (user_id, read_at)
+  }
+}
+
+Table otp_codes {
+  id bigint [pk, increment]
+  email varchar(180) [not null]
+  code varchar(6) [not null]
+  expires_at timestamp [not null]
+  used_at timestamp [null]
+  created_at timestamp
+  updated_at timestamp
+
+  indexes {
+    email
+  }
+}
+
+Table ai_logs {
+  id bigint [pk, increment]
+  conversation_id bigint [ref: > conversations.id, not null]
+  message_id bigint [ref: > messages.id, null]
+  workflow_type varchar(50) [not null]
+  input json [null]
+  output json [null]
+  confidence decimal(4,3) [null]
+  duration_ms int [null]
+  created_at timestamp
+  updated_at timestamp
+}

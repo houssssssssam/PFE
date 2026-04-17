@@ -2,32 +2,45 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use App\Enums\Role;
 use Database\Factories\UserFactory;
-use Illuminate\Database\Eloquent\Attributes\Fillable;
-use Illuminate\Database\Eloquent\Attributes\Hidden;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Laravel\Sanctum\HasApiTokens;
 
-#[Fillable(['name', 'email', 'password', 'role'])]
-#[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, HasApiTokens;
 
-    /**
-     * Get the attributes that should be cast.
-     *
-     * @return array<string, string>
-     */
+    protected $fillable = [
+        'name',
+        'email',
+        'phone',
+        'password',
+        'role',
+        'avatar_url',
+        'language',
+        'email_verified_at',
+        'is_active',
+        'google_id',
+        'facebook_id',
+        'two_factor_secret',
+        'two_factor_confirmed_at',
+    ];
+
+    protected $hidden = ['password', 'remember_token', 'two_factor_secret'];
+
     protected function casts(): array
     {
         return [
             'email_verified_at' => 'datetime',
+            'two_factor_confirmed_at' => 'datetime',
             'password' => 'hashed',
+            'is_active' => 'boolean',
             'role' => Role::class,
         ];
     }
@@ -37,8 +50,43 @@ class User extends Authenticatable
         return $this->role === Role::Admin;
     }
 
+    public function isExpert(): bool
+    {
+        return $this->role === Role::Expert;
+    }
+
     public function hasRole(Role $role): bool
     {
         return $this->role === $role;
+    }
+
+    public function expert(): HasOne
+    {
+        return $this->hasOne(Expert::class);
+    }
+
+    public function conversations(): HasMany
+    {
+        return $this->hasMany(Conversation::class);
+    }
+
+    public function reviews(): HasMany
+    {
+        return $this->hasMany(Review::class);
+    }
+
+    public function payments(): HasMany
+    {
+        return $this->hasMany(Payment::class);
+    }
+
+    public function otpCodes(): HasMany
+    {
+        return $this->hasMany(OtpCode::class);
+    }
+
+    public function notifications(): HasMany
+    {
+        return $this->hasMany(Notification::class);
     }
 }

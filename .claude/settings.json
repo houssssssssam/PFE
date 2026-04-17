@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(node generate_sprints.js)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Models/User.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Models/Expert.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Models/Conversation.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Models/Message.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Models/OtpCode.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Enums/Role.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Enums/ExpertStatus.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Enums/ConversationStatus.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Enums/PaymentStatus.php)",
+      "Bash(php -l C:/Users/houssam/PFE/app/Enums/OtpType.php)"
+    ]
+  }
+}
