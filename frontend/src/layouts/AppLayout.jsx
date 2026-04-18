@@ -1,31 +1,36 @@
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import {
-  LayoutDashboard,
-  MessageSquare,
-  Users,
-  Bell,
-  Settings,
-  LogOut,
-  Menu,
-  X,
+  LayoutDashboard, MessageSquare, Users, Bell,
+  Settings, LogOut, Menu, X, Wallet, UserCog,
 } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '../stores/authStore';
 import './AppLayout.css';
 
-const navItems = [
-  { to: '/dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
-  { to: '/conversations', icon: MessageSquare, label: 'Conversations' },
-  { to: '/experts', icon: Users, label: 'Experts' },
-  { to: '/notifications', icon: Bell, label: 'Notifications' },
-  { to: '/settings', icon: Settings, label: 'Paramètres' },
+const userNavItems = [
+  { to: '/dashboard',     icon: LayoutDashboard, label: 'Tableau de bord' },
+  { to: '/conversations', icon: MessageSquare,   label: 'Conversations' },
+  { to: '/experts',       icon: Users,           label: 'Experts' },
+  { to: '/notifications', icon: Bell,            label: 'Notifications' },
+  { to: '/settings',      icon: Settings,        label: 'Paramètres' },
+];
+
+const expertNavItems = [
+  { to: '/expert/dashboard', icon: LayoutDashboard, label: 'Tableau de bord' },
+  { to: '/conversations',    icon: MessageSquare,   label: 'Conversations' },
+  { to: '/expert/profile',   icon: UserCog,         label: 'Mon profil' },
+  { to: '/expert/wallet',    icon: Wallet,          label: 'Portefeuille' },
+  { to: '/notifications',    icon: Bell,            label: 'Notifications' },
 ];
 
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+
+  const isExpert = user?.role === 'expert';
+  const navItems = isExpert ? expertNavItems : userNavItems;
 
   const handleLogout = async () => {
     await logout();
@@ -34,7 +39,6 @@ export default function AppLayout() {
 
   return (
     <div className="app-layout">
-      {/* Sidebar */}
       <aside className={`sidebar ${sidebarOpen ? 'sidebar--open' : ''}`}>
         <div className="sidebar-header">
           <div className="sidebar-logo">
@@ -77,10 +81,8 @@ export default function AppLayout() {
         </div>
       </aside>
 
-      {/* Overlay for mobile */}
       {sidebarOpen && <div className="sidebar-overlay" onClick={() => setSidebarOpen(false)} />}
 
-      {/* Main content */}
       <main className="app-main">
         <header className="app-header">
           <button className="app-menu-btn" onClick={() => setSidebarOpen(true)}>
