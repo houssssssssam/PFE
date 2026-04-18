@@ -1,6 +1,6 @@
 NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-18 (S10 done)
+Last updated: 2026-04-18 (S11 done)
 
 ================================================================
 COMPLETED TASKS
@@ -301,6 +301,32 @@ Branding: NEXORA logo integration completed.
 
 ================================================================
 
+[S11] USER DASHBOARD + EXPERT LISTING (branch: feature/s11-dashboard-experts)
+-----------------------------------------------------------------------------
+Hooks (React Query):
+  - useConversations(params) — paginated list of user conversations
+  - useConversation(id) — single conversation
+  - useExperts(params) — expert list with search/category/availability filters
+  - useExpert(id) — expert detail
+  - useExpertReviews(id) — paginated reviews for an expert
+  - useCategories() — category list (10min staleTime)
+  - useNotifications(params) — notifications list + unread count
+  - useMarkAsRead() / useMarkAllAsRead() — mutations with cache invalidation
+
+Pages updated/built:
+  - DashboardPage.jsx — real data: recent conversations list, notification list,
+    unread count, stat cards wired to API
+  - ExpertsPage.jsx — search input, category dropdown, availability filter,
+    paginated expert grid with ExpertCard component
+  - ExpertDetailPage.jsx — full profile: avatar, rating, hourly rate,
+    availability badge, bio, certifications, customer reviews with StarRow
+
+Routing (App.jsx):
+  - /experts         → ExpertsPage
+  - /experts/:id     → ExpertDetailPage
+
+================================================================
+
 NEXT UP
 ================================================================
 
@@ -312,7 +338,8 @@ NEXT UP
 [x] S08 — n8n + AI workflows
 [x] S09 — Categories, notifications, reviews
 [x] S10 — Frontend React setup + auth pages
-[ ] S11 — Chat Interface & Real-time Messaging UI
+[x] S11 — Dashboard + Expert listing + Expert detail
+[ ] S12 — Chat UI with WebSocket (React + Laravel Echo + Reverb)
 [ ] S20 — Audio pipeline
 [ ] S21 — RAG
 [ ] S22 — Advanced AI

@@ -1,0 +1,112 @@
+.expert-detail { padding: var(--space-lg); max-width: 860px; }
+
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-muted);
+  font-size: 14px;
+  padding: 0;
+  margin-bottom: var(--space-md);
+  transition: color 0.15s;
+}
+.back-btn:hover { color: var(--text-primary); }
+
+.expert-profile-card { margin-bottom: var(--space-lg); }
+
+.expert-profile-top {
+  display: flex;
+  gap: var(--space-md);
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+
+.expert-detail-avatar {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-500), #6366f1);
+  color: #fff;
+  font-size: 1.8rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.expert-profile-info { flex: 1; min-width: 0; }
+.expert-detail-name { margin: 0 0 4px; font-size: 1.4rem; font-weight: 700; }
+.expert-detail-category { font-size: 14px; color: var(--text-muted); }
+
+.expert-detail-stats {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  margin-top: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.expert-stat-chip {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-secondary);
+}
+
+.expert-badge {
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 20px;
+}
+.expert-badge--available { background: rgba(16,185,129,0.12); color: #10b981; }
+.expert-badge--busy { background: rgba(107,114,128,0.12); color: #6b7280; }
+
+.expert-bio-section,
+.expert-certs-section { margin-top: var(--space-md); padding-top: var(--space-md); border-top: 1px solid var(--border-default); }
+
+.expert-bio-section h3,
+.expert-certs-section h3 { font-size: 1rem; font-weight: 600; margin: 0 0 var(--space-sm); }
+
+.expert-bio-section p { color: var(--text-secondary); font-size: 14px; line-height: 1.6; margin: 0; }
+
+.expert-certs-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.expert-certs-list li { display: flex; align-items: center; gap: 8px; font-size: 14px; color: var(--text-secondary); }
+
+/* Reviews */
+.reviews-list { display: flex; flex-direction: column; gap: var(--space-sm); }
+
+.review-card { padding: var(--space-md); }
+
+.review-header { display: flex; align-items: center; gap: var(--space-sm); margin-bottom: var(--space-sm); }
+
+.review-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--bg-hover);
+  color: var(--text-primary);
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.9rem;
+  flex-shrink: 0;
+}
+
+.review-author { margin: 0 0 3px; font-size: 14px; font-weight: 600; }
+.review-comment { margin: 0; font-size: 14px; color: var(--text-secondary); line-height: 1.5; }
+
+.star-row { display: flex; gap: 2px; }
