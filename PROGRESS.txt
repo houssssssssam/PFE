@@ -1,6 +1,6 @@
 NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-18 (S12 done)
+Last updated: 2026-04-18 (S13 done)
 
 ================================================================
 COMPLETED TASKS
@@ -370,8 +370,34 @@ NEXT UP
 [x] S10 — Frontend React setup + auth pages
 [x] S11 — Dashboard + Expert listing + Expert detail
 [x] S12 — Chat UI with WebSocket (React + Laravel Echo + Reverb)
-[ ] S13 — Expert dashboard frontend
+[x] S13 — Expert dashboard frontend
 [ ] S14 — Admin back-office frontend
+
+[S13] EXPERT DASHBOARD FRONTEND (branch: feature/s11-dashboard-experts)
+------------------------------------------------------------------------
+Hook: useExpertPanel.js
+  - useExpertDashboard() — GET /expert/dashboard (stats)
+  - useExpertProfile() / useUpdateExpertProfile() — GET/PUT /expert/profile
+  - useToggleAvailability() — PUT /expert/availability
+  - useExpertWallet() — GET /expert/wallet
+  - useExpertTransactions(page) — GET /expert/wallet/transactions
+
+Pages:
+  - ExpertDashboardPage — stats grid (conversations, rating, wallet balance),
+    availability toggle button, recent conversations list, quick links
+  - ExpertProfilePage — edit bio, hourly rate, category, certifications
+    (add/remove chips with Enter key support)
+  - ExpertWalletPage — balance/earned/withdrawn cards + transaction history
+    with credit/debit icons and pagination
+
+AppLayout: sidebar now switches nav items based on user role
+  - role=user  → dashboard, conversations, experts, notifications, settings
+  - role=expert → expert/dashboard, conversations, expert/profile, expert/wallet, notifications
+
+Routing (App.jsx):
+  - /expert/dashboard → ExpertDashboardPage
+  - /expert/profile   → ExpertProfilePage
+  - /expert/wallet    → ExpertWalletPage
 [ ] S20 — Audio pipeline
 [ ] S21 — RAG
 [ ] S22 — Advanced AI

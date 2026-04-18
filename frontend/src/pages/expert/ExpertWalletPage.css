@@ -1,0 +1,66 @@
+.expert-wallet-page { padding: var(--space-lg); max-width: 860px; }
+
+.wallet-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--space-md);
+}
+
+.wallet-card {
+  border-radius: var(--radius-lg);
+  padding: var(--space-lg);
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  color: #fff;
+}
+.wallet-card--balance   { background: linear-gradient(135deg, var(--primary-500), #6366f1); }
+.wallet-card--earned    { background: linear-gradient(135deg, #10b981, #059669); }
+.wallet-card--withdrawn { background: linear-gradient(135deg, #f59e0b, #d97706); }
+
+.wallet-card-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-md);
+  background: rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.wallet-card-label { margin: 0 0 4px; font-size: 12px; opacity: 0.85; }
+.wallet-card-value { margin: 0; font-size: 1.4rem; font-weight: 700; }
+
+.tx-list { display: flex; flex-direction: column; gap: 2px; }
+
+.tx-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  padding: 12px 8px;
+  border-radius: var(--radius-md);
+  transition: background 0.15s;
+}
+.tx-row:hover { background: var(--bg-hover); }
+
+.tx-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.tx-icon--credit { background: rgba(16,185,129,0.12); color: #10b981; }
+.tx-icon--debit  { background: rgba(239,68,68,0.12);  color: #ef4444; }
+
+.tx-info { flex: 1; min-width: 0; }
+.tx-desc { margin: 0 0 2px; font-size: 14px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.tx-ref  { margin: 0; font-size: 12px; color: var(--text-muted); }
+
+.tx-amount { font-size: 14px; font-weight: 700; flex-shrink: 0; }
+.tx-amount--credit { color: #10b981; }
+.tx-amount--debit  { color: #ef4444; }
+
+.pagination { display: flex; justify-content: center; align-items: center; gap: var(--space-md); }

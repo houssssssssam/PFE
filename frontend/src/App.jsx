@@ -18,6 +18,9 @@ import ExpertDetailPage from './pages/experts/ExpertDetailPage';
 import ConversationsPage from './pages/conversations/ConversationsPage';
 import ConversationPage from './pages/conversations/ConversationPage';
 import NewConversationPage from './pages/conversations/NewConversationPage';
+import ExpertDashboardPage from './pages/expert/ExpertDashboardPage';
+import ExpertProfilePage from './pages/expert/ExpertProfilePage';
+import ExpertWalletPage from './pages/expert/ExpertWalletPage';
 
 // Route guards
 function PrivateRoute({ children }) {
@@ -81,6 +84,9 @@ export default function App() {
           <Route path="/conversations" element={<ConversationsPage />} />
           <Route path="/conversations/new" element={<NewConversationPage />} />
           <Route path="/conversations/:id" element={<ConversationPage />} />
+          <Route path="/expert/dashboard" element={<ExpertDashboardPage />} />
+          <Route path="/expert/profile" element={<ExpertProfilePage />} />
+          <Route path="/expert/wallet" element={<ExpertWalletPage />} />
         </Route>
 
         {/* Default redirect */}
