@@ -21,8 +21,8 @@ class OtpMail extends Mailable
     public function envelope(): Envelope
     {
         $subject = $this->data['type'] === 'password_reset'
-            ? 'Réinitialisation de votre mot de passe — Coopiyo'
-            : 'Vérifiez votre adresse email — Coopiyo';
+            ? 'Réinitialisation de votre mot de passe — Nexora'
+            : 'Vérifiez votre adresse email — Nexora';
 
         return new Envelope(subject: $subject);
     }

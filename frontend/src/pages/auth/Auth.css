@@ -1,0 +1,117 @@
+/* Auth pages shared styles */
+
+.auth-page {
+  width: 100%;
+}
+
+.auth-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: var(--space-xs);
+}
+
+.auth-subtitle {
+  font-size: 0.9375rem;
+  color: var(--text-secondary);
+  margin-bottom: var(--space-xl);
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+/* Input with icon */
+.input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.input-icon {
+  position: absolute;
+  left: 0.875rem;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.input-with-icon {
+  padding-left: 2.75rem !important;
+}
+
+.input-with-action {
+  padding-right: 2.75rem !important;
+}
+
+.input-action {
+  position: absolute;
+  right: 0.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.375rem;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-radius: var(--radius-sm);
+  transition: color var(--transition-fast);
+}
+.input-action:hover {
+  color: var(--text-primary);
+}
+
+/* Forgot password link */
+.auth-forgot {
+  text-align: right;
+  margin-top: -0.25rem;
+}
+.auth-forgot a {
+  font-size: 0.8125rem;
+  color: var(--primary-400);
+}
+.auth-forgot a:hover {
+  color: var(--primary-300);
+  text-decoration: underline;
+}
+
+/* Divider */
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: var(--space-md);
+  margin: var(--space-lg) 0;
+  color: var(--text-muted);
+  font-size: 0.8125rem;
+}
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border-default);
+}
+
+/* Social buttons */
+.auth-social {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+}
+
+/* Switch link */
+.auth-switch {
+  text-align: center;
+  margin-top: var(--space-lg);
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+.auth-switch a {
+  color: var(--primary-400);
+  font-weight: 600;
+}
+.auth-switch a:hover {
+  color: var(--primary-300);
+}

@@ -13,7 +13,7 @@
 </head>
 <body>
     <div class="container">
-        <div class="logo">Coopiyo</div>
+        <div class="logo">Nexora</div>
 
         <p>Bonjour <strong>{{ $user->name }}</strong>,</p>
 
@@ -28,7 +28,7 @@
         <p>Ce code expire dans <strong>10 minutes</strong>.</p>
         <p>Si vous n'avez pas effectué cette action, ignorez cet email.</p>
 
-        <div class="footer">© {{ date('Y') }} Coopiyo. Tous droits réservés.</div>
+        <div class="footer">© {{ date('Y') }} Nexora. Tous droits réservés.</div>
     </div>
 </body>
 </html>

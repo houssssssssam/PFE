@@ -35,4 +35,26 @@ return [
         ],
     ],
 
+    'google' => [
+        'client_id'     => env('GOOGLE_CLIENT_ID'),
+        'client_secret' => env('GOOGLE_CLIENT_SECRET'),
+        'redirect'      => env('GOOGLE_REDIRECT_URL'),
+    ],
+
+    'facebook' => [
+        'client_id'     => env('FACEBOOK_CLIENT_ID'),
+        'client_secret' => env('FACEBOOK_CLIENT_SECRET'),
+        'redirect'      => env('FACEBOOK_REDIRECT_URL'),
+    ],
+
+    'n8n' => [
+        'base_url'  => env('N8N_BASE_URL'),
+        'secret'    => env('N8N_SECRET'),
+        'webhooks'  => [
+            'analyze'   => env('N8N_WEBHOOK_ANALYZE'),
+            'moderate'  => env('N8N_WEBHOOK_MODERATE'),
+            'summarize' => env('N8N_WEBHOOK_SUMMARIZE'),
+        ],
+    ],
+
 ];

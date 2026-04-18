@@ -1,7 +1,7 @@
-# COOPIYO — API Backend (Laravel 11)
+# NEXORA — API Backend (Laravel 11)
 
 ## Project Overview
-Coopiyo is a SaaS multiplatform (Web + Mobile) platform connecting users with qualified experts,
+Nexora is a SaaS multiplatform (Web + Mobile) platform connecting users with qualified experts,
 assisted by AI. Two-tier model:
 - Level 1 (AI): GPT-4 analyzes the request, classifies the domain, answers immediately
 - Level 2 (Human Expert): if AI confidence < 0.75 or user requests it, escalate to best available expert
@@ -517,7 +517,7 @@ Run in this order:
 ## Environment Variables
 
 ```env
-APP_NAME=Coopiyo
+APP_NAME=Nexora
 APP_ENV=local
 APP_KEY=
 APP_URL=http://localhost:8000
@@ -526,8 +526,8 @@ FRONTEND_URL=http://localhost:5173
 DB_CONNECTION=pgsql
 DB_HOST=pgsql
 DB_PORT=5432
-DB_DATABASE=coopiyo
-DB_USERNAME=coopiyo
+DB_DATABASE=nexora
+DB_USERNAME=nexora
 DB_PASSWORD=secret
 
 REDIS_HOST=redis
@@ -537,9 +537,9 @@ BROADCAST_CONNECTION=reverb
 QUEUE_CONNECTION=redis
 CACHE_STORE=redis
 
-REVERB_APP_ID=coopiyo
-REVERB_APP_KEY=coopiyo-key
-REVERB_APP_SECRET=coopiyo-secret
+REVERB_APP_ID=nexora
+REVERB_APP_KEY=nexora-key
+REVERB_APP_SECRET=nexora-secret
 REVERB_HOST=localhost
 REVERB_PORT=8080
 
@@ -561,13 +561,13 @@ ELEVENLABS_VOICE_ID=
 
 # Qdrant
 QDRANT_HOST=http://qdrant:6333
-QDRANT_COLLECTION=coopiyo_knowledge
+QDRANT_COLLECTION=nexora_knowledge
 
 # AWS S3
 AWS_ACCESS_KEY_ID=
 AWS_SECRET_ACCESS_KEY=
 AWS_DEFAULT_REGION=eu-west-3
-AWS_BUCKET=coopiyo-storage
+AWS_BUCKET=nexora-storage
 
 # Stripe
 STRIPE_KEY=
@@ -581,8 +581,8 @@ CMI_BASE_URL=
 
 # Brevo (email)
 BREVO_API_KEY=
-MAIL_FROM_ADDRESS=noreply@coopiyo.ma
-MAIL_FROM_NAME=Coopiyo
+MAIL_FROM_ADDRESS=noreply@nexora.ma
+MAIL_FROM_NAME=Nexora
 
 # Firebase FCM
 FCM_SERVER_KEY=
