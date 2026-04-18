@@ -13,6 +13,8 @@ import RegisterPage from './pages/auth/RegisterPage';
 
 // App pages
 import DashboardPage from './pages/DashboardPage';
+import ExpertsPage from './pages/experts/ExpertsPage';
+import ExpertDetailPage from './pages/experts/ExpertDetailPage';
 
 // Route guards
 function PrivateRoute({ children }) {
@@ -71,6 +73,8 @@ export default function App() {
         {/* App routes */}
         <Route element={<PrivateRoute><AppLayout /></PrivateRoute>}>
           <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/experts" element={<ExpertsPage />} />
+          <Route path="/experts/:id" element={<ExpertDetailPage />} />
         </Route>
 
         {/* Default redirect */}
