@@ -67,8 +67,32 @@ class Conversation extends Model
         return $this->hasMany(AiLog::class);
     }
 
+    public function lastMessage(): HasOne
+    {
+        return $this->hasOne(Message::class)->latestOfMany();
+    }
+
+    public function unreadMessages(): HasMany
+    {
+        return $this->hasMany(Message::class)->whereNull('read_at');
+    }
+
     public function scopeOpen($query)
     {
         return $query->whereNotIn('status', [ConversationStatus::Closed->value]);
+    }
+
+    /**
+     * Scope to get conversations for a user (as owner or assigned expert).
+     */
+    public function scopeForUser($query, User $user)
+    {
+        return $query->where(function ($q) use ($user) {
+            $q->where('user_id', $user->id);
+
+            if ($user->expert) {
+                $q->orWhere('expert_id', $user->expert->id);
+            }
+        });
     }
 }

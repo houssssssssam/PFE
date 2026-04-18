@@ -1,6 +1,6 @@
-COOPIYO — Project Progress Log
+NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-17 (S03 done)
+Last updated: 2026-04-18 (S10 done)
 
 ================================================================
 COMPLETED TASKS
@@ -134,21 +134,189 @@ Controllers (9 invokable):
   - LogoutController      POST /api/v1/auth/logout (auth:sanctum)
   - MeController          GET  /api/v1/auth/me    (auth:sanctum)
 
+[S04] OAUTH + 2FA TOTP (branch: feature/oauth-2fa)
+----------------------------------------------------
+Packages installed:
+  - laravel/socialite v5.26.1
+  - pragmarx/google2fa-laravel v3.0.1
+  - bacon/bacon-qr-code v3.1.1
+
+Configuration:
+  - config/services.php — added Google, Facebook, n8n service blocks
+
+Services:
+  - app/Services/TwoFactorService.php — NEW
+    (enable, confirm, disable, verify, isEnabled — encrypted TOTP secrets)
+  - app/Services/AuthService.php — UPDATED
+    (added handleSocialLogin, createTwoFactorToken for 2FA gate)
+
+OAuth Controllers (5 invokable):
+  - GoogleRedirectController   GET  /api/v1/auth/google/redirect
+  - GoogleCallbackController   GET  /api/v1/auth/google/callback
+  - FacebookRedirectController GET  /api/v1/auth/facebook/redirect
+  - FacebookCallbackController GET  /api/v1/auth/facebook/callback
+  - SocialTokenController      POST /api/v1/auth/social/token (mobile)
+
+2FA Controllers (4 invokable):
+  - TwoFactorEnableController  POST /api/v1/auth/2fa/enable  (auth:sanctum)
+  - TwoFactorConfirmController POST /api/v1/auth/2fa/confirm (auth:sanctum)
+  - TwoFactorDisableController POST /api/v1/auth/2fa/disable (auth:sanctum)
+  - TwoFactorVerifyController  POST /api/v1/auth/2fa/verify  (public, uses 2fa_token)
+
+Form Requests (3):
+  - SocialTokenRequest (provider: google|facebook, token: required)
+  - TwoFactorCodeRequest (code: 6 digits)
+  - TwoFactorVerifyRequest (two_factor_token + code: 6 digits)
+
+Login flow change:
+  - LoginController now checks TwoFactorService::isEnabled()
+  - If 2FA active → returns { requires_2fa: true, two_factor_token } instead of full tokens
+  - Client must call POST /2fa/verify with TOTP code to get real tokens
+  - Same 2FA gate applied to OAuth callback controllers
+
+Total API routes: 18 (was 9)
+All 25 existing tests pass.
+
+[S05] EXPERT MODULE (branch: feature/expert-module)
+-----------------------------------------------------
+Service:
+  - app/Services/ExpertService.php — NEW
+    (apply, uploadDocument, deleteDocument, updateProfile, toggleAvailability,
+     validate, reject, getDashboardStats)
+
+API Resources (6):
+  - ExpertResource, ExpertDocumentResource, CategoryResource,
+    ReviewResource, WalletResource, WalletTransactionResource
+
+Form Requests (4):
+  - ApplyExpertRequest (category, documents[], bio, hourly_rate)
+  - UpdateExpertProfileRequest (bio, certifications, hourly_rate, category)
+  - UploadDocumentRequest (file: pdf/jpg/png max 5MB, type)
+  - RejectExpertRequest (optional reason)
+
+Expert Controllers (authenticated, auth:sanctum):
+  - ApplyController            POST   /api/v1/expert/apply
+  - ExpertProfileController    GET    /api/v1/expert/profile
+  - ExpertProfileController    PUT    /api/v1/expert/profile
+  - AvailabilityController     PUT    /api/v1/expert/availability
+  - ExpertDashboardController  GET    /api/v1/expert/dashboard
+  - ExpertDocumentController   GET/POST/DELETE /api/v1/expert/documents
+  - ExpertWalletController     GET    /api/v1/expert/wallet + transactions
+
+Public: ExpertList, ExpertShow, ExpertReviews
+Admin: AdminExpertList, AdminExpertValidate, AdminExpertReject
+Policy: ExpertPolicy.php | Doc upload: S3 at experts/{id}/documents/
+Total API routes: 34 (was 18) | All 25 tests pass.
+
+[S06] CONVERSATIONS + MESSAGES (branch: feature/conversations)
+---------------------------------------------------------------
+Services: ConversationService, MessageService
+Controllers: 10 (List, Create, Show, Escalate, Close, Rate,
+  MessageList, MessageSend, MessageAudio, MessageRead)
+Resources: ConversationResource, MessageResource
+Requests: CreateConversation, SendMessage, SendAudio, RateConversation
+Policy: ConversationPolicy | Routes: 45 (was 34) | All 25 tests pass.
+
+[S07] REAL-TIME — LARAVEL REVERB (branch: feature/realtime)
+------------------------------------------------------------
+Packages: pusher/pusher-php-server v7.2.7
+
+Broadcast Events (8):
+  - MessageSent          -> conversation.{id} (private)
+  - MessageRead          -> conversation.{id} (private)
+  - UserTyping           -> conversation.{id} (private)
+  - ExpertStatusChanged  -> experts.online (presence)
+  - ConversationAssigned -> user.{id} (private)
+  - NotificationReceived -> user.{id} (private)
+  - AIResponseReady      -> conversation.{id} (private)
+  - ConversationEscalated -> expert.{id} (private)
+
+Channels (4): conversation.{id}, user.{id}, expert.{id}, experts.online
+Wiring: MessageService, ConversationService, ExpertService dispatch events
+New: TypingController POST /conversations/{id}/typing
+Routes: 46 (was 45) | All 25 tests pass.
+
+[S08] n8n + AI WORKFLOWS (branch: feature/ai-workflows)
+--------------------------------------------------------
+Services:
+  - N8nService — HTTP client to n8n webhooks (analyze, moderate, summarize)
+    Retry 2x, 30s timeout, safe French fallback responses when n8n is down
+  - AiService — orchestrates: moderate -> analyze -> respond -> log -> escalate
+    Also: summarizeConversation (called on close)
+
+Jobs:
+  - ProcessMessageJob — queued, 3 tries, 5s backoff
+    Dispatched from MessageService on every user text message
+  - SummarizeConversationJob — queued, 2 tries, 10s backoff
+    Dispatched from ConversationCloseController on close
+
+AI Pipeline:
+  1. User sends message -> ProcessMessageJob dispatched
+  2. Moderation check (flag harmful content)
+  3. Analyze: classify intent + generate GPT-4 response
+  4. Create AI response message + broadcast AIResponseReady
+  5. Auto-escalate if confidence < threshold
+  6. Log everything to ai_logs table
+
+Admin endpoints:
+  - GET /api/v1/admin/ai-logs (filter by conversation, workflow, escalated)
+  - GET /api/v1/admin/ai-logs/stats (totals, tokens, by-workflow breakdown)
+
+Resource: AiLogResource
+Routes: 48 (was 46) | All 25 tests pass.
+
+[S09] CATEGORIES, NOTIFICATIONS, REVIEWS (branch: feature/categories-notif)
+-----------------------------------------------------------------------------
+Controllers:
+  - CategoryListController    GET  /api/v1/categories (public, active + expert count)
+  - AdminCategoryController   CRUD /api/v1/admin/categories (index/store/update/destroy)
+  - NotificationController    GET  /api/v1/notifications (filter unread, paginated)
+                              PUT  /notifications/{id}/read + /read-all
+
+Services:
+  - NotificationService — create + broadcast NotificationReceived event
+    Convenience: expertValidated, expertRejected, conversationAssigned, newReview
+
+Wiring:
+  - ExpertService: sends notification on validate/reject
+  - ConversationService: sends notification on expert assignment
+
+Resources: NotificationResource
+Routes: 56 (was 48) | All 25 tests pass.
+
 ================================================================
+
+[S10] FRONTEND REACT SETUP + AUTH PAGES
+-----------------------------------------------------------------------------
+Stack: Vite, React, React Router, Zustand, Axios, Tailwind/Custom CSS, Framer Motion
+Architecture:
+  - Design System: Custom CSS variables, dark theme, Mix-blend-mode transparency tricks.
+  - State Management: `authStore.js` with auto token-injection interceptors.
+  - Layouts: `AuthLayout` (branding + orb background), `AppLayout` (sidebar nav + dashboard structure).
+Pages Built:
+  - /login: Email/Password, 2FA gate built-in.
+  - /register: Name, Email, Password, Password Confirmation.
+  - /dashboard: Base placeholder with stat cards.
+Branding: NEXORA logo integration completed.
+
+================================================================
+
 NEXT UP
 ================================================================
 
-[x] S03 — Auth API (Sanctum tokens, register, login, OTP, refresh)
-[ ] S04 — OAuth (Google/Facebook) + 2FA TOTP
-[ ] S05 — Expert module (apply, documents upload, admin validation)
-[ ] S06 — Conversations + Messages REST API
-[ ] S07 — Real-time (Laravel Reverb events)
-[ ] S08 — n8n + AI workflows (GPT-4, classify, respond, escalate)
-[ ] S09 — Categories, notifications, reviews API
-[ ] S20 — Audio pipeline (Whisper + ElevenLabs TTS)
-[ ] S21 — RAG (Qdrant + embeddings)
-[ ] S22 — Advanced AI (moderation, summary, scoring)
-[ ] S23 — Stripe payments + expert wallet
-[ ] S24 — CMI + PDF invoices + admin financial
-[ ] S25 — PHPUnit tests (70% coverage target)
-[ ] S26 — Cypress E2E + k6 load tests
+[x] S03 — Auth API
+[x] S04 — OAuth + 2FA
+[x] S05 — Expert module
+[x] S06 — Conversations + Messages
+[x] S07 — Real-time (Reverb)
+[x] S08 — n8n + AI workflows
+[x] S09 — Categories, notifications, reviews
+[x] S10 — Frontend React setup + auth pages
+[ ] S11 — Chat Interface & Real-time Messaging UI
+[ ] S20 — Audio pipeline
+[ ] S21 — RAG
+[ ] S22 — Advanced AI
+[ ] S23 — Stripe payments
+[ ] S24 — CMI + invoices
+[ ] S25 — PHPUnit tests
+[ ] S26 — Cypress E2E + k6

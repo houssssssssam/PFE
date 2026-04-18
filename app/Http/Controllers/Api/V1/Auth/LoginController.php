@@ -7,12 +7,16 @@ use App\Http\Requests\Api\V1\Auth\LoginRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Services\AuthService;
+use App\Services\TwoFactorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
-    public function __construct(private AuthService $authService) {}
+    public function __construct(
+        private AuthService $authService,
+        private TwoFactorService $twoFactorService,
+    ) {}
 
     public function __invoke(LoginRequest $request): JsonResponse
     {
@@ -31,6 +35,17 @@ class LoginController extends Controller
                 'message' => 'Email non vérifié. Consultez votre boîte mail.',
                 'requires_verification' => true,
             ], 403);
+        }
+
+        // 2FA gate: if user has 2FA enabled, return a short-lived token
+        if ($this->twoFactorService->isEnabled($user)) {
+            $twoFactorToken = $this->authService->createTwoFactorToken($user);
+
+            return response()->json([
+                'message'          => 'Vérification 2FA requise.',
+                'requires_2fa'     => true,
+                'two_factor_token' => $twoFactorToken,
+            ]);
         }
 
         $tokens = $this->authService->createTokenPair($user);
