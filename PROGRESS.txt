@@ -1,6 +1,6 @@
 NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-18 (S11 done)
+Last updated: 2026-04-18 (S12 done)
 
 ================================================================
 COMPLETED TASKS
@@ -327,6 +327,36 @@ Routing (App.jsx):
 
 ================================================================
 
+[S12] CHAT UI WITH WEBSOCKET (branch: feature/s11-dashboard-experts)
+--------------------------------------------------------------------
+Packages: laravel-echo v2.3.4, pusher-js v8.5.0
+
+Files created:
+  - frontend/src/lib/echo.js — Laravel Echo singleton configured for Reverb
+    (broadcaster: reverb, auth header from localStorage, /broadcasting/auth)
+  - frontend/.env — VITE_REVERB_APP_KEY / HOST / PORT vars
+  - frontend/src/hooks/useMessages.js — useMessages(id), useSendMessage(id),
+    useCreateConversation() mutations with React Query cache invalidation
+
+Pages:
+  - ConversationsPage.jsx + .css — list of all conversations with status badges,
+    empty state, link to new conversation
+  - NewConversationPage.jsx + .css — form: category select + optional title,
+    expert_id passed via router state from ExpertDetailPage
+  - ConversationPage.jsx + .css — full chat UI:
+    · Message bubbles: user (purple, right), AI (soft purple, left), expert (teal, left)
+    · Typing indicator with animated dots (shown while waiting for AI)
+    · Real-time via Echo: listens .MessageSent + .AIResponseReady on private channel
+    · Enter to send (Shift+Enter for newline), auto-scroll to bottom
+    · Closed conversation: input disabled + notice
+
+Routing (App.jsx):
+  - /conversations       → ConversationsPage
+  - /conversations/new   → NewConversationPage
+  - /conversations/:id   → ConversationPage
+
+================================================================
+
 NEXT UP
 ================================================================
 
@@ -339,7 +369,9 @@ NEXT UP
 [x] S09 — Categories, notifications, reviews
 [x] S10 — Frontend React setup + auth pages
 [x] S11 — Dashboard + Expert listing + Expert detail
-[ ] S12 — Chat UI with WebSocket (React + Laravel Echo + Reverb)
+[x] S12 — Chat UI with WebSocket (React + Laravel Echo + Reverb)
+[ ] S13 — Expert dashboard frontend
+[ ] S14 — Admin back-office frontend
 [ ] S20 — Audio pipeline
 [ ] S21 — RAG
 [ ] S22 — Advanced AI
