@@ -21,6 +21,12 @@ import NewConversationPage from './pages/conversations/NewConversationPage';
 import ExpertDashboardPage from './pages/expert/ExpertDashboardPage';
 import ExpertProfilePage from './pages/expert/ExpertProfilePage';
 import ExpertWalletPage from './pages/expert/ExpertWalletPage';
+import AdminDashboardPage from './pages/admin/AdminDashboardPage';
+import AdminUsersPage from './pages/admin/AdminUsersPage';
+import AdminExpertsPage from './pages/admin/AdminExpertsPage';
+import AdminConversationsPage from './pages/admin/AdminConversationsPage';
+import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
+import AdminPaymentsPage from './pages/admin/AdminPaymentsPage';
 
 // Route guards
 function PrivateRoute({ children }) {
@@ -30,9 +36,20 @@ function PrivateRoute({ children }) {
 }
 
 function GuestRoute({ children }) {
-  const { isAuthenticated, isLoading } = useAuthStore();
+  const { isAuthenticated, isLoading, user } = useAuthStore();
   if (isLoading) return <LoadingScreen />;
-  return !isAuthenticated ? children : <Navigate to="/dashboard" replace />;
+  if (isAuthenticated) {
+    return <Navigate to={user?.role === 'admin' ? '/admin/dashboard' : '/dashboard'} replace />;
+  }
+  return children;
+}
+
+function AdminRoute({ children }) {
+  const { isAuthenticated, isLoading, user } = useAuthStore();
+  if (isLoading) return <LoadingScreen />;
+  if (!isAuthenticated) return <Navigate to="/login" replace />;
+  if (user?.role !== 'admin') return <Navigate to="/dashboard" replace />;
+  return children;
 }
 
 function LoadingScreen() {
@@ -87,6 +104,16 @@ export default function App() {
           <Route path="/expert/dashboard" element={<ExpertDashboardPage />} />
           <Route path="/expert/profile" element={<ExpertProfilePage />} />
           <Route path="/expert/wallet" element={<ExpertWalletPage />} />
+        </Route>
+
+        {/* Admin routes */}
+        <Route element={<AdminRoute><AppLayout /></AdminRoute>}>
+          <Route path="/admin/dashboard"     element={<AdminDashboardPage />} />
+          <Route path="/admin/users"         element={<AdminUsersPage />} />
+          <Route path="/admin/experts"       element={<AdminExpertsPage />} />
+          <Route path="/admin/conversations" element={<AdminConversationsPage />} />
+          <Route path="/admin/categories"    element={<AdminCategoriesPage />} />
+          <Route path="/admin/payments"      element={<AdminPaymentsPage />} />
         </Route>
 
         {/* Default redirect */}

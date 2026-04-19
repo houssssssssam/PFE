@@ -51,10 +51,42 @@ return [
         'base_url'  => env('N8N_BASE_URL'),
         'secret'    => env('N8N_SECRET'),
         'webhooks'  => [
-            'analyze'   => env('N8N_WEBHOOK_ANALYZE'),
-            'moderate'  => env('N8N_WEBHOOK_MODERATE'),
-            'summarize' => env('N8N_WEBHOOK_SUMMARIZE'),
+            'analyze'    => env('N8N_WEBHOOK_ANALYZE'),
+            'moderate'   => env('N8N_WEBHOOK_MODERATE'),
+            'summarize'  => env('N8N_WEBHOOK_SUMMARIZE'),
+            'transcribe' => env('N8N_WEBHOOK_TRANSCRIBE', '/webhook/transcribe-audio'),
+            'tts'        => env('N8N_WEBHOOK_TTS', '/webhook/text-to-speech'),
         ],
+    ],
+
+    'openai' => [
+        'api_key'         => env('OPENAI_API_KEY'),
+        'model'           => env('OPENAI_MODEL', 'gpt-4o'),
+        'whisper_model'   => env('OPENAI_WHISPER_MODEL', 'whisper-1'),
+        'embedding_model' => env('OPENAI_EMBEDDING_MODEL', 'text-embedding-3-small'),
+    ],
+
+    'qdrant' => [
+        'host'        => env('QDRANT_HOST', 'http://qdrant:6333'),
+        'collection'  => env('QDRANT_COLLECTION', 'nexora_knowledge'),
+        'vector_size' => 1536,
+    ],
+
+    'elevenlabs' => [
+        'api_key'  => env('ELEVENLABS_API_KEY'),
+        'voice_id' => env('ELEVENLABS_VOICE_ID'),
+    ],
+
+    'stripe' => [
+        'key'            => env('STRIPE_KEY'),
+        'secret'         => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
+    'cmi' => [
+        'merchant_id' => env('CMI_MERCHANT_ID'),
+        'store_key'   => env('CMI_STORE_KEY'),
+        'base_url'    => env('CMI_BASE_URL'),
     ],
 
 ];

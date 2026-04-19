@@ -7,6 +7,7 @@ use App\Enums\MessageType;
 use App\Events\MessageRead;
 use App\Events\MessageSent;
 use App\Jobs\ProcessMessageJob;
+use App\Jobs\TranscribeAudioJob;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
@@ -60,8 +61,9 @@ class MessageService
             'media_url'       => $path,
         ]);
 
-        // TODO (S20): Trigger audio transcription workflow
-        // TranscribeAudioJob::dispatch($message);
+        if ($senderType === MessageSenderType::User) {
+            TranscribeAudioJob::dispatch($message);
+        }
 
         event(new MessageSent($message));
 

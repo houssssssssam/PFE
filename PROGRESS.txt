@@ -1,6 +1,6 @@
 NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-18 (S13 done)
+Last updated: 2026-04-19 (S25 done)
 
 ================================================================
 COMPLETED TASKS
@@ -398,10 +398,117 @@ Routing (App.jsx):
   - /expert/dashboard → ExpertDashboardPage
   - /expert/profile   → ExpertProfilePage
   - /expert/wallet    → ExpertWalletPage
-[ ] S20 — Audio pipeline
-[ ] S21 — RAG
-[ ] S22 — Advanced AI
-[ ] S23 — Stripe payments
-[ ] S24 — CMI + invoices
-[ ] S25 — PHPUnit tests
-[ ] S26 — Cypress E2E + k6
+
+================================================================
+
+[S14] ADMIN BACK-OFFICE FRONTEND (branch: feature/s11-dashboard-experts)
+-------------------------------------------------------------------------
+Hook: useAdmin.js (all mutations + queries)
+  - useAdminDashboard() — GET /admin/dashboard (platform stats)
+  - useAdminUsers(params) — GET /admin/users (search, role filter, pagination)
+  - useToggleUser() — PUT /admin/users/{id}/toggle
+  - useAdminPendingExperts() — GET /admin/experts/pending
+  - useValidateExpert() / useRejectExpert() — PUT validate/reject
+  - useAdminConversations(params) — GET /admin/conversations (status filter)
+  - useAdminCategories() — GET /admin/categories
+  - useCreateCategory() / useUpdateCategory() / useDeleteCategory() — CRUD
+
+Pages:
+  - AdminDashboardPage — 6 stat cards, quick-nav links to all admin sections
+  - AdminUsersPage — searchable + role-filterable table, activate/deactivate toggle
+  - AdminExpertsPage — pending expert cards with validate/reject actions
+  - AdminConversationsPage — status-filtered table, paginated
+  - AdminCategoriesPage — full CRUD via modal
+
+Route guard: AdminRoute | AppLayout: admin sidebar nav (6 items with Payments)
+
+Routing (App.jsx):
+  - /admin/dashboard     → AdminDashboardPage
+  - /admin/users         → AdminUsersPage
+  - /admin/experts       → AdminExpertsPage
+  - /admin/conversations → AdminConversationsPage
+  - /admin/categories    → AdminCategoriesPage
+  - /admin/payments      → AdminPaymentsPage
+
+[x] S14 — Admin back-office frontend
+
+================================================================
+
+[S20] AUDIO PIPELINE — Whisper + ElevenLabs TTS
+------------------------------------------------
+  - TranscribeAudioJob, N8nService::transcribe/tts
+  - TranscriptionCompleteController POST /ai/transcription-complete
+  - TtsCompleteController POST /ai/tts-complete
+  - Frontend: AudioRecorder component, useSendAudio hook, audio bubbles
+
+[x] S20 — Audio pipeline
+
+================================================================
+
+[S21] RAG — Qdrant + Embeddings + Semantic Search
+--------------------------------------------------
+  - VectorSearchService (embedText, search, upsert, deletePoint)
+  - GenerateEmbeddingJob, AiKnowledgeBaseObserver
+  - AdminKnowledgeBaseController CRUD /admin/knowledge
+  - KnowledgeBaseSeeder — 40 entries (5 per category × 8 categories)
+
+[x] S21 — RAG
+
+================================================================
+
+[S22] ADVANCED AI — Escalation Scoring + Moderation + Summary
+--------------------------------------------------------------
+  - Confidence thresholds: 0.75 (escalate), 0.50 (disclaimer)
+  - Content moderation: flag + warn user + notify admins
+  - Conversation summary: key_topics column, SummarizeConversationJob
+
+[x] S22 — Advanced AI
+
+================================================================
+
+[S23] STRIPE PAYMENTS + EXPERT WALLET
+--------------------------------------
+  - PaymentService: createIntent, confirm, handleWebhook, creditExpertWallet (80/20)
+  - GenerateInvoiceJob — DomPDF invoice saved to S3
+  - Routes: /payments/stripe/intent|confirm, /payments/history, /webhooks/stripe
+
+[x] S23 — Stripe payments
+
+================================================================
+
+[S24] CMI (MOROCCAN PAYMENT GATEWAY) + ADMIN FINANCIAL DASHBOARD
+-----------------------------------------------------------------
+  - PaymentService::initiateCmi/handleCmiCallback — SHA-512 HMAC hash
+  - CmiInitiateController, CmiCallbackController
+  - AdminPaymentsController — revenue stats (total/stripe/cmi)
+  - AdminPaymentsPage.jsx — stat cards, filters, payments table
+
+[x] S24 — CMI + admin payments dashboard
+
+================================================================
+
+[S25] PHPUNIT TESTS — 78 PASSING
+---------------------------------
+  - 15 test files, 78 tests across Auth, Expert, Conversation, Admin, Payment
+  - 5 new factories: Category, Expert, Conversation, Message, Payment
+  - Bug fixes: role not set on register, sanctum expiration null crash,
+    admin self-deactivation guard, published Sanctum migrations
+
+[x] S25 — PHPUnit tests (78 passing)
+
+================================================================
+
+NEXT UP
+================================================================
+
+[x] S03–S09  — Full backend API
+[x] S10–S14  — React frontend (auth, dashboard, chat, expert panel, admin)
+[x] S20–S22  — Audio pipeline, RAG, Advanced AI
+[x] S23–S25  — Payments, invoices, PHPUnit tests
+[ ] S15 — Flutter setup + auth
+[ ] S16 — Flutter home + experts + profile
+[ ] S17 — Flutter real-time chat
+[ ] S18 — Flutter audio recording + upload
+[ ] S19 — Flutter polish + push notifications
+[ ] S26 — Cypress E2E + k6 + OWASP ZAP
+[ ] S27 — Production deployment

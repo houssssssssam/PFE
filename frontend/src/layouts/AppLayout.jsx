@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import {
   LayoutDashboard, MessageSquare, Users, Bell,
   Settings, LogOut, Menu, X, Wallet, UserCog,
+  ShieldCheck, CreditCard, FolderOpen,
 } from 'lucide-react';
 import { useState } from 'react';
 import useAuthStore from '../stores/authStore';
@@ -24,13 +25,23 @@ const expertNavItems = [
   { to: '/notifications',    icon: Bell,            label: 'Notifications' },
 ];
 
+const adminNavItems = [
+  { to: '/admin/dashboard',     icon: LayoutDashboard, label: 'Tableau de bord' },
+  { to: '/admin/users',         icon: Users,           label: 'Utilisateurs' },
+  { to: '/admin/experts',       icon: ShieldCheck,     label: 'Experts' },
+  { to: '/admin/conversations', icon: MessageSquare,   label: 'Conversations' },
+  { to: '/admin/categories',    icon: FolderOpen,      label: 'Catégories' },
+  { to: '/admin/payments',      icon: CreditCard,      label: 'Paiements' },
+];
+
 export default function AppLayout() {
   const { user, logout } = useAuthStore();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const isExpert = user?.role === 'expert';
-  const navItems = isExpert ? expertNavItems : userNavItems;
+  const isAdmin  = user?.role === 'admin';
+  const navItems = isAdmin ? adminNavItems : isExpert ? expertNavItems : userNavItems;
 
   const handleLogout = async () => {
     await logout();

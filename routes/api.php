@@ -42,9 +42,23 @@ use App\Http\Controllers\Api\V1\ExpertShowController;
 use App\Http\Controllers\Api\V1\NotificationController;
 use App\Http\Controllers\Api\V1\Admin\AdminAiLogController;
 use App\Http\Controllers\Api\V1\Admin\AdminCategoryController;
+use App\Http\Controllers\Api\V1\Admin\AdminConversationController;
+use App\Http\Controllers\Api\V1\Admin\AdminDashboardController;
 use App\Http\Controllers\Api\V1\Admin\AdminExpertListController;
 use App\Http\Controllers\Api\V1\Admin\AdminExpertValidateController;
 use App\Http\Controllers\Api\V1\Admin\AdminExpertRejectController;
+use App\Http\Controllers\Api\V1\Admin\AdminKnowledgeBaseController;
+use App\Http\Controllers\Api\V1\Admin\AdminPaymentsController;
+use App\Http\Controllers\Api\V1\Admin\AdminUserController;
+use App\Http\Controllers\Api\V1\AI\AiCallbackController;
+use App\Http\Controllers\Api\V1\AI\TranscriptionCompleteController;
+use App\Http\Controllers\Api\V1\AI\TtsCompleteController;
+use App\Http\Controllers\Api\V1\Payment\CmiCallbackController;
+use App\Http\Controllers\Api\V1\Payment\CmiInitiateController;
+use App\Http\Controllers\Api\V1\Payment\PaymentConfirmController;
+use App\Http\Controllers\Api\V1\Payment\PaymentHistoryController;
+use App\Http\Controllers\Api\V1\Payment\PaymentIntentController;
+use App\Http\Controllers\Api\V1\Payment\StripeWebhookController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -147,9 +161,22 @@ Route::prefix('v1')->group(function () {
     // ADMIN — admin-only endpoints
     // ================================================================
     Route::prefix('admin')->middleware(['auth:sanctum', 'role:admin'])->group(function () {
+        Route::get('dashboard', AdminDashboardController::class);
+
+        // Users
+        Route::get('users', [AdminUserController::class, 'index']);
+        Route::put('users/{user}/toggle', [AdminUserController::class, 'toggle']);
+
+        // Experts
         Route::get('experts/pending', AdminExpertListController::class);
         Route::put('experts/{expert}/validate', AdminExpertValidateController::class);
         Route::put('experts/{expert}/reject', AdminExpertRejectController::class);
+
+        // Conversations
+        Route::get('conversations', AdminConversationController::class);
+
+        // Payments
+        Route::get('payments', AdminPaymentsController::class);
 
         // AI logs
         Route::get('ai-logs', [AdminAiLogController::class, 'index']);
@@ -160,5 +187,36 @@ Route::prefix('v1')->group(function () {
         Route::post('categories', [AdminCategoryController::class, 'store']);
         Route::put('categories/{category}', [AdminCategoryController::class, 'update']);
         Route::delete('categories/{category}', [AdminCategoryController::class, 'destroy']);
+
+        // Knowledge base CRUD
+        Route::get('knowledge', [AdminKnowledgeBaseController::class, 'index']);
+        Route::post('knowledge', [AdminKnowledgeBaseController::class, 'store']);
+        Route::put('knowledge/{knowledge}', [AdminKnowledgeBaseController::class, 'update']);
+        Route::delete('knowledge/{knowledge}', [AdminKnowledgeBaseController::class, 'destroy']);
     });
+
+    // ================================================================
+    // AI CALLBACKS — called by n8n (validated by X-N8N-Secret header)
+    // ================================================================
+    Route::prefix('ai')->group(function () {
+        Route::post('callback', AiCallbackController::class);
+        Route::post('transcription-complete', TranscriptionCompleteController::class);
+        Route::post('tts-complete', TtsCompleteController::class);
+    });
+
+    // ================================================================
+    // PAYMENTS — authenticated + public webhooks
+    // ================================================================
+    Route::prefix('payments')->middleware('auth:sanctum')->group(function () {
+        Route::post('stripe/intent', PaymentIntentController::class);
+        Route::post('stripe/confirm', PaymentConfirmController::class);
+        Route::post('cmi/initiate', CmiInitiateController::class);
+        Route::get('history', PaymentHistoryController::class);
+    });
+
+    // CMI callback — public (server-to-server from CMI)
+    Route::post('payments/cmi/callback', CmiCallbackController::class);
+
+    // Stripe webhook — public (validated by signature)
+    Route::post('webhooks/stripe', StripeWebhookController::class);
 });

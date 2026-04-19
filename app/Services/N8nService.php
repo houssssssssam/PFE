@@ -55,6 +55,22 @@ class N8nService
     }
 
     /**
+     * Trigger audio transcription via n8n Workflow 4 (Whisper).
+     */
+    public function transcribe(array $payload): array
+    {
+        return $this->callWebhook('transcribe', $payload);
+    }
+
+    /**
+     * Trigger text-to-speech via n8n Workflow 5 (ElevenLabs).
+     */
+    public function tts(array $payload): array
+    {
+        return $this->callWebhook('tts', $payload);
+    }
+
+    /**
      * Summarize a conversation (called on close).
      *
      * @return array{
