@@ -12,7 +12,7 @@ services:
     networks:
       - nexora
     depends_on:
-      - pgsql
+      - mysql
       - redis
 
   nginx:
@@ -29,18 +29,19 @@ services:
     depends_on:
       - app
 
-  pgsql:
-    image: postgres:16-alpine
-    container_name: nexora_pgsql
+  mysql:
+    image: mysql:8.0
+    container_name: nexora_mysql
     restart: unless-stopped
     environment:
-      POSTGRES_DB: ${DB_DATABASE:-nexora}
-      POSTGRES_USER: ${DB_USERNAME:-nexora}
-      POSTGRES_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_DATABASE: ${DB_DATABASE:-nexora}
+      MYSQL_USER: ${DB_USERNAME:-nexora}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-secret}
+      MYSQL_ROOT_PASSWORD: rootsecret
     ports:
-      - "5432:5432"
+      - "3306:3306"
     volumes:
-      - pgsql_data:/var/lib/postgresql/data
+      - mysql_data:/var/lib/mysql
     networks:
       - nexora
 
@@ -70,7 +71,7 @@ services:
     networks:
       - nexora
     depends_on:
-      - pgsql
+      - mysql
       - redis
 
   n8n:
@@ -126,12 +127,27 @@ services:
     networks:
       - nexora
 
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: nexora_phpmyadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PMA_HOST: mysql
+      PMA_USER: nexora
+      PMA_PASSWORD: secret
+    networks:
+      - nexora
+    depends_on:
+      - mysql
+
 networks:
   nexora:
     driver: bridge
 
 volumes:
-  pgsql_data:
+  mysql_data:
   redis_data:
   n8n_data:
   qdrant_data:

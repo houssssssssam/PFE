@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Search, ToggleLeft, ToggleRight, Loader2 } from 'lucide-react';
 import { useAdminUsers, useToggleUser } from '../../hooks/useAdmin';
+import CustomSelect from '../../components/CustomSelect';
 import './AdminUsersPage.css';
 
 export default function AdminUsersPage() {
@@ -29,12 +30,16 @@ export default function AdminUsersPage() {
             onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           />
         </div>
-        <select value={role} onChange={(e) => { setRole(e.target.value); setPage(1); }}>
-          <option value="">Tous les rôles</option>
-          <option value="user">Utilisateur</option>
-          <option value="expert">Expert</option>
-          <option value="admin">Admin</option>
-        </select>
+        <CustomSelect
+          value={role}
+          onChange={(e) => { setRole(e.target.value); setPage(1); }}
+          placeholder="Tous les rôles"
+          options={[
+            { value: 'user', label: 'Utilisateur' },
+            { value: 'expert', label: 'Expert' },
+            { value: 'admin', label: 'Admin' },
+          ]}
+        />
       </div>
 
       {isLoading ? (

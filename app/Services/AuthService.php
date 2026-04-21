@@ -19,10 +19,12 @@ class AuthService
     public function register(array $data): User
     {
         $user = User::create([
-            'name'     => $data['name'],
-            'email'    => $data['email'],
-            'password' => $data['password'],
-            'language' => $data['language'] ?? 'fr',
+            'name'      => $data['name'],
+            'email'     => $data['email'],
+            'password'  => $data['password'],
+            'language'  => $data['language'] ?? 'fr',
+            'role'      => 'user',
+            'is_active' => true,
         ]);
 
         $otp = $this->otpService->generate($user, OtpType::EmailVerification);
@@ -40,10 +42,12 @@ class AuthService
         // Revoke all existing tokens on fresh login
         $user->tokens()->delete();
 
+        $expirationMinutes = (int)(config('sanctum.expiration') ?? 15);
+
         $accessToken = $user->createToken(
             'access_token',
             ['*'],
-            now()->addMinutes(config('sanctum.expiration', 15))
+            now()->addMinutes($expirationMinutes)
         );
 
         $refreshToken = $user->createToken(

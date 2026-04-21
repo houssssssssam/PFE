@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { ArrowLeft, Loader2, MessageSquare } from 'lucide-react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useCategories } from '../../hooks/useExperts';
+import CustomSelect from '../../components/CustomSelect';
 import { useCreateConversation } from '../../hooks/useMessages';
 import toast from 'react-hot-toast';
 import './NewConversationPage.css';
@@ -35,12 +36,11 @@ export default function NewConversationPage() {
 
   return (
     <div className="new-conv-page">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
+      <button className="back-btn" onClick={() => navigate(-1)}>
+        <ArrowLeft size={16} /> Retour
+      </button>
 
-        <button className="back-btn" onClick={() => navigate(-1)}>
-          <ArrowLeft size={16} /> Retour
-        </button>
-
+      <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }} style={{ width: '100%', maxWidth: 560 }}>
         <div className="new-conv-card card">
           <div className="new-conv-icon">
             <MessageSquare size={28} />
@@ -53,17 +53,13 @@ export default function NewConversationPage() {
           <form onSubmit={handleSubmit} className="new-conv-form">
             <div className="form-group">
               <label className="form-label">Catégorie *</label>
-              <select
-                className="form-input"
+              <CustomSelect
                 value={categoryId}
                 onChange={(e) => setCategoryId(e.target.value)}
+                placeholder="Sélectionnez un domaine..."
                 required
-              >
-                <option value="">Sélectionnez un domaine...</option>
-                {categories.map((cat) => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+                options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
+              />
             </div>
 
             <div className="form-group">

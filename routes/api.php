@@ -59,6 +59,9 @@ use App\Http\Controllers\Api\V1\Payment\PaymentConfirmController;
 use App\Http\Controllers\Api\V1\Payment\PaymentHistoryController;
 use App\Http\Controllers\Api\V1\Payment\PaymentIntentController;
 use App\Http\Controllers\Api\V1\Payment\StripeWebhookController;
+use App\Http\Controllers\Api\V1\User\DeleteAccountController;
+use App\Http\Controllers\Api\V1\User\UserAvatarController;
+use App\Http\Controllers\Api\V1\User\UserProfileController;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -106,6 +109,16 @@ Route::prefix('v1')->group(function () {
     Route::get('experts', ExpertListController::class);
     Route::get('experts/{expert}', ExpertShowController::class);
     Route::get('experts/{expert}/reviews', ExpertReviewsController::class);
+
+    // ================================================================
+    // USER PROFILE — authenticated
+    // ================================================================
+    Route::prefix('users')->middleware('auth:sanctum')->group(function () {
+        Route::get('profile', [UserProfileController::class, 'show']);
+        Route::put('profile', [UserProfileController::class, 'update']);
+        Route::post('avatar', UserAvatarController::class);
+        Route::delete('account', DeleteAccountController::class);
+    });
 
     // ================================================================
     // NOTIFICATIONS — authenticated

@@ -35,8 +35,8 @@ const useAuthStore = create((set, get) => ({
         return { requires2fa: true, token: data.two_factor_token };
       }
 
-      localStorage.setItem('access_token', data.data.access_token);
-      localStorage.setItem('refresh_token', data.data.refresh_token);
+      localStorage.setItem('access_token', data.data.token.access_token);
+      localStorage.setItem('refresh_token', data.data.token.refresh_token);
       set({ user: data.data.user, isAuthenticated: true });
       return { success: true };
     } catch (err) {
@@ -53,8 +53,8 @@ const useAuthStore = create((set, get) => ({
       const { data } = await api.post('/auth/2fa/verify', { code }, {
         headers: { Authorization: `Bearer ${twoFactorToken}` },
       });
-      localStorage.setItem('access_token', data.data.access_token);
-      localStorage.setItem('refresh_token', data.data.refresh_token);
+      localStorage.setItem('access_token', data.data.token.access_token);
+      localStorage.setItem('refresh_token', data.data.token.refresh_token);
       set({ user: data.data.user, isAuthenticated: true });
       return { success: true };
     } catch (err) {

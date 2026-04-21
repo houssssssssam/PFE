@@ -1,36 +1,24 @@
 import { motion } from 'framer-motion';
-import { MessageSquare, Users, Clock, Bell, ChevronRight, Loader2 } from 'lucide-react';
+import { MessageSquare, Users, Zap, ShieldCheck, Mic, ChevronRight, Loader2, Bell } from 'lucide-react';
 import { Link, useNavigate } from 'react-router-dom';
 import useAuthStore from '../stores/authStore';
 import { useConversations } from '../hooks/useConversations';
 import { useNotifications } from '../hooks/useNotifications';
 import './DashboardPage.css';
 
-function StatCard({ label, value, icon: Icon, color, bg, delay }) {
-  return (
-    <motion.div
-      className="stat-card"
-      initial={{ opacity: 0, y: 20 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 0.4, delay }}
-    >
-      <div className="stat-card-icon" style={{ background: bg, color }}>
-        <Icon size={22} />
-      </div>
-      <div className="stat-card-info">
-        <span className="stat-card-value">{value}</span>
-        <span className="stat-card-label">{label}</span>
-      </div>
-    </motion.div>
-  );
-}
+const features = [
+  { icon: Zap,         title: 'IA intelligente',   desc: 'Réponses instantanées grâce à l\'intelligence artificielle avancée', bg: 'rgba(139,92,246,0.1)',  color: '#a78bfa' },
+  { icon: Users,       title: 'Experts qualifiés', desc: 'Réseau d\'experts vérifiés dans chaque domaine',                    bg: 'rgba(20,184,166,0.1)',  color: '#2dd4bf' },
+  { icon: ShieldCheck, title: 'Sécurité',          desc: 'Données chiffrées et confidentialité garantie',                    bg: 'rgba(59,130,246,0.1)',  color: '#60a5fa' },
+  { icon: Mic,         title: 'Audio & Texte',     desc: 'Communiquez par message texte ou vocal',                           bg: 'rgba(245,158,11,0.1)', color: '#fbbf24' },
+];
 
 function StatusBadge({ status }) {
   const map = {
-    ai:     { label: 'IA',      color: '#8b5cf6', bg: 'rgba(139,92,246,0.12)' },
-    expert: { label: 'Expert',  color: '#14b8a6', bg: 'rgba(20,184,166,0.12)' },
-    open:   { label: 'Ouvert',  color: '#3b82f6', bg: 'rgba(59,130,246,0.12)' },
-    closed: { label: 'Fermé',   color: '#6b7280', bg: 'rgba(107,114,128,0.12)' },
+    ai:     { label: 'IA',      bg: '#FFF7ED', color: '#C4752A' },
+    expert: { label: 'Expert',  bg: '#F0FDF4', color: '#16A34A' },
+    open:   { label: 'Ouvert',  bg: '#EFF6FF', color: '#2563EB' },
+    closed: { label: 'Fermé',   bg: '#F5F5F4', color: '#78716C' },
   };
   const s = map[status] ?? map.open;
   return (
@@ -48,107 +36,120 @@ export default function DashboardPage() {
 
   const conversations = convsData?.data ?? [];
   const notifications = notifsData?.data ?? [];
-  const unreadCount = notifsData?.meta?.unread_count ?? 0;
-
-  const stats = [
-    { label: 'Conversations', value: convsData?.meta?.total ?? '—', icon: MessageSquare, color: 'var(--primary-500)', bg: 'rgba(139,92,246,0.1)', delay: 0 },
-    { label: 'Experts disponibles', value: '—', icon: Users, color: '#14b8a6', bg: 'rgba(20,184,166,0.1)', delay: 0.1 },
-    { label: 'Non lues', value: unreadCount, icon: Bell, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', delay: 0.2 },
-    { label: 'Temps moyen', value: '—', icon: Clock, color: '#10b981', bg: 'rgba(16,185,129,0.1)', delay: 0.3 },
-  ];
+  const unreadCount   = notifsData?.meta?.unread_count ?? 0;
 
   return (
     <div className="dashboard">
-      <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.4 }}>
 
-        {/* Header */}
-        <div className="dashboard-header">
-          <div>
-            <h1 className="dashboard-title">Bonjour, {user?.name?.split(' ')[0]} 👋</h1>
-            <p className="dashboard-subtitle">Voici un aperçu de votre activité</p>
-          </div>
-          <button className="btn btn-primary" onClick={() => navigate('/conversations/new')}>
+      {/* ── Hero ── */}
+      <motion.div className="dashboard-hero" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+        <div className="dashboard-hero-badge">
+          <Zap size={14} />
+          Plateforme d'expertise intelligente
+        </div>
+        <h1 className="dashboard-hero-title">
+          Bonjour, <span className="dashboard-hero-accent">{user?.name?.split(' ')[0]}</span>
+        </h1>
+        <p className="dashboard-hero-subtitle">
+          Posez vos questions et obtenez des réponses fiables grâce à l'intelligence artificielle et à un réseau d'experts qualifiés.
+        </p>
+        <div className="dashboard-hero-actions">
+          <button className="btn btn-primary btn-lg" onClick={() => navigate('/conversations/new')}>
             <MessageSquare size={18} />
-            Nouvelle conversation
+            Démarrer une conversation
           </button>
-        </div>
-
-        {/* Stats */}
-        <div className="dashboard-stats">
-          {stats.map((s) => <StatCard key={s.label} {...s} />)}
-        </div>
-
-        {/* Grid */}
-        <div className="dashboard-grid">
-
-          {/* Recent conversations */}
-          <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
-              <h3 style={{ fontWeight: 600 }}>Conversations récentes</h3>
-              <Link to="/conversations" style={{ fontSize: 13, color: 'var(--primary-500)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                Voir tout <ChevronRight size={14} />
-              </Link>
-            </div>
-
-            {convsLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-lg)' }}>
-                <Loader2 size={24} className="spin" style={{ color: 'var(--primary-500)' }} />
-              </div>
-            ) : conversations.length === 0 ? (
-              <p className="text-muted text-sm">
-                Aucune conversation pour le moment.<br />
-                Commencez une nouvelle conversation pour obtenir de l'aide.
-              </p>
-            ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                {conversations.map((conv) => (
-                  <li key={conv.id}>
-                    <Link
-                      to={`/conversations/${conv.id}`}
-                      style={{ display: 'flex', alignItems: 'center', gap: 'var(--space-sm)', padding: '10px', borderRadius: 'var(--radius-md)', textDecoration: 'none', color: 'inherit', transition: 'background 0.15s' }}
-                      onMouseEnter={e => e.currentTarget.style.background = 'var(--bg-hover)'}
-                      onMouseLeave={e => e.currentTarget.style.background = 'transparent'}
-                    >
-                      <div style={{ flex: 1 }}>
-                        <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>{conv.title ?? `Conversation #${conv.id}`}</p>
-                        <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{conv.category?.name}</p>
-                      </div>
-                      <StatusBadge status={conv.status} />
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
-
-          {/* Notifications */}
-          <div className="card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 'var(--space-md)' }}>
-              <h3 style={{ fontWeight: 600 }}>Notifications</h3>
-              <Link to="/notifications" style={{ fontSize: 13, color: 'var(--primary-500)', display: 'flex', alignItems: 'center', gap: 4 }}>
-                Voir tout <ChevronRight size={14} />
-              </Link>
-            </div>
-
-            {notifsLoading ? (
-              <div style={{ display: 'flex', justifyContent: 'center', padding: 'var(--space-lg)' }}>
-                <Loader2 size={24} className="spin" style={{ color: 'var(--primary-500)' }} />
-              </div>
-            ) : notifications.length === 0 ? (
-              <p className="text-muted text-sm">Aucune notification.</p>
-            ) : (
-              <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: 'var(--space-sm)' }}>
-                {notifications.map((notif) => (
-                  <li key={notif.id} style={{ padding: '10px', borderRadius: 'var(--radius-md)', background: notif.read_at ? 'transparent' : 'rgba(139,92,246,0.07)', borderLeft: notif.read_at ? 'none' : '3px solid var(--primary-500)' }}>
-                    <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>{notif.title}</p>
-                    <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{notif.body}</p>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </div>
+          <Link to="/experts" className="btn btn-secondary btn-lg">
+            Voir les experts <ChevronRight size={18} />
+          </Link>
         </div>
       </motion.div>
+
+      {/* ── Features ── */}
+      <motion.div className="dashboard-features" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.1 }}>
+        <h2 className="dashboard-section-title">Pourquoi Nexora ?</h2>
+        <div className="dashboard-features-grid">
+          {features.map(({ icon: Icon, title, desc, bg, color }) => (
+            <div key={title} className="feature-card">
+              <div className="feature-card-icon" style={{ background: bg, color }}>
+                <Icon size={22} />
+              </div>
+              <h3 className="feature-card-title">{title}</h3>
+              <p className="feature-card-desc">{desc}</p>
+            </div>
+          ))}
+        </div>
+      </motion.div>
+
+      {/* ── Recent activity ── */}
+      <motion.div className="dashboard-grid" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.2 }}>
+
+        {/* Conversations */}
+        <div className="card">
+          <div className="card-header">
+            <h3>Conversations récentes</h3>
+            <Link to="/conversations" className="card-link">
+              Voir tout <ChevronRight size={14} />
+            </Link>
+          </div>
+          {convsLoading ? (
+            <div className="card-loading"><Loader2 size={24} className="spin" style={{ color: 'var(--primary-500)' }} /></div>
+          ) : conversations.length === 0 ? (
+            <p className="card-empty">Aucune conversation pour le moment.<br />Commencez pour obtenir de l'aide.</p>
+          ) : (
+            <ul className="card-list">
+              {conversations.map((conv) => (
+                <li key={conv.id}>
+                  <Link to={`/conversations/${conv.id}`} className="card-list-item">
+                    <div style={{ flex: 1 }}>
+                      <p style={{ margin: 0, fontWeight: 500, fontSize: 14, color: 'var(--text-primary)' }}>{conv.title ?? `Conversation #${conv.id}`}</p>
+                      <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{conv.category?.name}</p>
+                    </div>
+                    <StatusBadge status={conv.status} />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+
+        {/* Notifications */}
+        <div className="card">
+          <div className="card-header">
+            <h3>
+              Notifications
+              {unreadCount > 0 && <span className="notif-count">{unreadCount}</span>}
+            </h3>
+            <Link to="/notifications" className="card-link">
+              Voir tout <ChevronRight size={14} />
+            </Link>
+          </div>
+          {notifsLoading ? (
+            <div className="card-loading"><Loader2 size={24} className="spin" style={{ color: 'var(--primary-500)' }} /></div>
+          ) : notifications.length === 0 ? (
+            <p className="card-empty">Aucune notification.</p>
+          ) : (
+            <ul className="card-list">
+              {notifications.map((notif) => (
+                <li key={notif.id} className={`notif-item ${!notif.read_at ? 'notif-item--unread' : ''}`}>
+                  <p style={{ margin: 0, fontWeight: 500, fontSize: 14 }}>{notif.title}</p>
+                  <p style={{ margin: 0, fontSize: 12, color: 'var(--text-muted)' }}>{notif.body}</p>
+                </li>
+              ))}
+            </ul>
+          )}
+        </div>
+      </motion.div>
+
+      {/* ── CTA Banner ── */}
+      <motion.div className="dashboard-cta-banner" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5, delay: 0.3 }}>
+        <h2>Prêt à obtenir des réponses ?</h2>
+        <p>Rejoignez Nexora et accédez à l'expertise dont vous avez besoin, quand vous en avez besoin.</p>
+        <button className="btn btn-lg" style={{ background: '#fff', color: 'var(--primary-600)', fontWeight: 700 }} onClick={() => navigate('/conversations/new')}>
+          <MessageSquare size={18} />
+          Commencer maintenant
+        </button>
+      </motion.div>
+
     </div>
   );
 }

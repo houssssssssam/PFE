@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { DollarSign, CreditCard, Loader2 } from 'lucide-react';
 import { useAdminPayments } from '../../hooks/useAdmin';
+import CustomSelect from '../../components/CustomSelect';
 import './AdminPaymentsPage.css';
 
 const STATUS_COLOR = { completed: 'green', pending: 'orange', failed: 'red', refunded: 'blue' };
@@ -39,18 +40,26 @@ export default function AdminPaymentsPage() {
       </div>
 
       <div className="filters-bar">
-        <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
-          <option value="">Tous les statuts</option>
-          <option value="pending">En attente</option>
-          <option value="completed">Complété</option>
-          <option value="failed">Échoué</option>
-          <option value="refunded">Remboursé</option>
-        </select>
-        <select value={provider} onChange={(e) => { setProvider(e.target.value); setPage(1); }}>
-          <option value="">Tous les providers</option>
-          <option value="stripe">Stripe</option>
-          <option value="cmi">CMI</option>
-        </select>
+        <CustomSelect
+          value={status}
+          onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+          placeholder="Tous les statuts"
+          options={[
+            { value: 'pending', label: 'En attente' },
+            { value: 'completed', label: 'Complété' },
+            { value: 'failed', label: 'Échoué' },
+            { value: 'refunded', label: 'Remboursé' },
+          ]}
+        />
+        <CustomSelect
+          value={provider}
+          onChange={(e) => { setProvider(e.target.value); setPage(1); }}
+          placeholder="Tous les providers"
+          options={[
+            { value: 'stripe', label: 'Stripe' },
+            { value: 'cmi', label: 'CMI' },
+          ]}
+        />
       </div>
 
       {isLoading ? (

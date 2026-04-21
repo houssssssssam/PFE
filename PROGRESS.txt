@@ -1,6 +1,6 @@
 NEXORA — Project Progress Log
 ================================
-Last updated: 2026-04-19 (S25 done)
+Last updated: 2026-04-19 (S25 rebuilt — 72 tests passing)
 
 ================================================================
 COMPLETED TASKS
@@ -487,14 +487,18 @@ Routing (App.jsx):
 
 ================================================================
 
-[S25] PHPUNIT TESTS — 78 PASSING
+[S25] PHPUNIT TESTS — 72 PASSING
 ---------------------------------
-  - 15 test files, 78 tests across Auth, Expert, Conversation, Admin, Payment
-  - 5 new factories: Category, Expert, Conversation, Message, Payment
-  - Bug fixes: role not set on register, sanctum expiration null crash,
+  - 10 feature test files + 2 unit test files = 72 tests, 166 assertions
+  - 5 factories: Category, Expert, Conversation, Message, Payment
+  - HasFactory added to Expert, Category, Conversation, Message, Payment models
+  - Bug fixes: role+is_active not set on register, sanctum expiration string crash,
     admin self-deactivation guard, published Sanctum migrations
+  - Tests: RegisterTest, LoginTest, ExpertListTest, ConversationTest, MessageTest,
+    AdminDashboardTest, AdminUsersTest, AdminExpertValidationTest,
+    AdminCategoriesTest, PaymentTest, PaymentServiceTest, AuthServiceTest
 
-[x] S25 — PHPUnit tests (78 passing)
+[x] S25 — PHPUnit tests (72 passing)
 
 ================================================================
 

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Loader2 } from 'lucide-react';
 import { useAdminConversations } from '../../hooks/useAdmin';
+import CustomSelect from '../../components/CustomSelect';
 import './AdminConversationsPage.css';
 
 const STATUS_COLORS = { ai: 'blue', expert: 'teal', open: 'green', closed: 'gray' };
@@ -20,13 +21,17 @@ export default function AdminConversationsPage() {
       </div>
 
       <div className="filters-bar">
-        <select value={status} onChange={(e) => { setStatus(e.target.value); setPage(1); }}>
-          <option value="">Tous les statuts</option>
-          <option value="ai">IA</option>
-          <option value="expert">Expert</option>
-          <option value="open">Ouvert</option>
-          <option value="closed">Fermé</option>
-        </select>
+        <CustomSelect
+          value={status}
+          onChange={(e) => { setStatus(e.target.value); setPage(1); }}
+          placeholder="Tous les statuts"
+          options={[
+            { value: 'ai', label: 'IA' },
+            { value: 'expert', label: 'Expert' },
+            { value: 'open', label: 'Ouvert' },
+            { value: 'closed', label: 'Fermé' },
+          ]}
+        />
       </div>
 
       {isLoading ? (

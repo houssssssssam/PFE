@@ -73,8 +73,9 @@ return [
     ],
 
     'elevenlabs' => [
-        'api_key'  => env('ELEVENLABS_API_KEY'),
-        'voice_id' => env('ELEVENLABS_VOICE_ID'),
+        'api_key'     => env('ELEVENLABS_API_KEY'),
+        'voice_id_fr' => env('ELEVENLABS_VOICE_ID_FR'),
+        'voice_id_ar' => env('ELEVENLABS_VOICE_ID_AR'),
     ],
 
     'stripe' => [

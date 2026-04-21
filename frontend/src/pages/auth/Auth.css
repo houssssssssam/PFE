@@ -5,10 +5,15 @@
 }
 
 .auth-title {
-  font-size: 1.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.625rem;
   font-weight: 700;
   color: var(--text-primary);
   margin-bottom: var(--space-xs);
+  background: linear-gradient(135deg, #fff 0%, #94A3B8 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
 }
 
 .auth-subtitle {
@@ -35,6 +40,12 @@
   left: 0.875rem;
   color: var(--text-muted);
   pointer-events: none;
+  transition: color 0.2s;
+  z-index: 1;
+}
+
+.input-wrapper:focus-within .input-icon {
+  color: #60A5FA;
 }
 
 .input-with-icon {
@@ -57,10 +68,11 @@
   color: var(--text-muted);
   cursor: pointer;
   border-radius: var(--radius-sm);
-  transition: color var(--transition-fast);
+  transition: color 0.2s;
+  z-index: 1;
 }
 .input-action:hover {
-  color: var(--text-primary);
+  color: #93C5FD;
 }
 
 /* Forgot password link */
@@ -70,11 +82,11 @@
 }
 .auth-forgot a {
   font-size: 0.8125rem;
-  color: var(--primary-400);
+  color: #60A5FA;
+  transition: color 0.2s;
 }
 .auth-forgot a:hover {
-  color: var(--primary-300);
-  text-decoration: underline;
+  color: #93C5FD;
 }
 
 /* Divider */
@@ -91,7 +103,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: var(--border-default);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 /* Social buttons */
@@ -109,9 +121,35 @@
   color: var(--text-secondary);
 }
 .auth-switch a {
-  color: var(--primary-400);
+  color: #60A5FA;
   font-weight: 600;
+  transition: color 0.2s;
 }
 .auth-switch a:hover {
-  color: var(--primary-300);
+  color: #93C5FD;
+}
+
+/* OTP input */
+.otp-inputs {
+  display: flex;
+  gap: var(--space-sm);
+  justify-content: center;
+}
+
+.otp-input {
+  width: 52px;
+  height: 56px;
+  text-align: center;
+  font-size: 1.25rem;
+  font-weight: 700;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+  color: var(--text-primary);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.otp-input:focus {
+  border-color: #2563EB;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15), var(--glow-sm);
 }

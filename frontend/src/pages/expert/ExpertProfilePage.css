@@ -1,24 +1,41 @@
-.expert-profile-page { padding: var(--space-lg); max-width: 720px; }
+.expert-profile-page { padding: var(--space-lg); }
 
 .eprofile-form { padding: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-lg); }
 
 .eprofile-section { display: flex; flex-direction: column; gap: var(--space-md); }
-.eprofile-section-title { font-size: 1rem; font-weight: 700; margin: 0; padding-bottom: var(--space-sm); border-bottom: 1px solid var(--border-default); }
+.eprofile-section-title {
+  font-size: 0.9375rem;
+  font-weight: 700;
+  margin: 0;
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+  color: var(--text-secondary);
+  letter-spacing: 0.03em;
+}
 
 .form-group { display: flex; flex-direction: column; gap: 6px; }
-.form-label { font-size: 13px; font-weight: 600; color: var(--text-secondary); }
+.form-label {
+  font-size: 0.8125rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+}
 .form-input {
   padding: 10px 14px;
-  border: 1px solid var(--border-default);
-  border-radius: var(--radius-md);
-  background: var(--bg-primary);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.03);
+  backdrop-filter: blur(12px);
   color: var(--text-primary);
-  font-size: 14px;
+  font-size: 0.9375rem;
   outline: none;
-  font-family: inherit;
-  transition: border-color 0.15s;
+  font-family: var(--font-sans);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
-.form-input:focus { border-color: var(--primary-500); }
+.form-input::placeholder { color: var(--text-muted); }
+.form-input:focus {
+  border-color: rgba(37, 99, 235, 0.5);
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
 
 .cert-list {
   list-style: none;
@@ -32,12 +49,16 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 8px 12px;
-  background: rgba(139,92,246,0.06);
-  border: 1px solid rgba(139,92,246,0.15);
-  border-radius: var(--radius-md);
-  font-size: 13px;
+  padding: 8px 14px;
+  background: rgba(124, 58, 237, 0.06);
+  border: 1px solid rgba(124, 58, 237, 0.15);
+  border-radius: var(--radius-lg);
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: border-color 0.2s;
 }
+.cert-item:hover { border-color: rgba(124, 58, 237, 0.3); }
+
 .cert-remove {
   background: none;
   border: none;
@@ -49,7 +70,7 @@
   border-radius: 4px;
   transition: color 0.15s;
 }
-.cert-remove:hover { color: #ef4444; }
+.cert-remove:hover { color: #FCA5A5; }
 
 .cert-add-row { display: flex; gap: var(--space-sm); }
 .cert-add-row .form-input { flex: 1; }

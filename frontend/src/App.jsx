@@ -27,6 +27,8 @@ import AdminExpertsPage from './pages/admin/AdminExpertsPage';
 import AdminConversationsPage from './pages/admin/AdminConversationsPage';
 import AdminCategoriesPage from './pages/admin/AdminCategoriesPage';
 import AdminPaymentsPage from './pages/admin/AdminPaymentsPage';
+import SettingsPage from './pages/settings/SettingsPage';
+import ApplyExpertPage from './pages/settings/ApplyExpertPage';
 
 // Route guards
 function PrivateRoute({ children }) {
@@ -104,6 +106,8 @@ export default function App() {
           <Route path="/expert/dashboard" element={<ExpertDashboardPage />} />
           <Route path="/expert/profile" element={<ExpertProfilePage />} />
           <Route path="/expert/wallet" element={<ExpertWalletPage />} />
+          <Route path="/settings" element={<SettingsPage />} />
+          <Route path="/apply-expert" element={<ApplyExpertPage />} />
         </Route>
 
         {/* Admin routes */}

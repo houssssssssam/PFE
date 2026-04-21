@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Search, Star, Clock, Filter, Loader2 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useExperts, useCategories } from '../../hooks/useExperts';
+import CustomSelect from '../../components/CustomSelect';
 import './ExpertsPage.css';
 
 function ExpertCard({ expert, index }) {
@@ -97,26 +98,20 @@ export default function ExpertsPage() {
 
           <div className="filter-group">
             <Filter size={16} />
-            <select
-              className="filter-select"
+            <CustomSelect
               value={categoryId}
               onChange={(e) => { setCategoryId(e.target.value); setPage(1); }}
-            >
-              <option value="">Toutes les catégories</option>
-              {categories.map((cat) => (
-                <option key={cat.id} value={cat.id}>{cat.name}</option>
-              ))}
-            </select>
+              placeholder="Toutes les catégories"
+              options={categories.map((cat) => ({ value: cat.id, label: cat.name }))}
+            />
           </div>
 
-          <select
-            className="filter-select"
+          <CustomSelect
             value={available}
             onChange={(e) => { setAvailable(e.target.value); setPage(1); }}
-          >
-            <option value="">Tous</option>
-            <option value="1">Disponibles uniquement</option>
-          </select>
+            placeholder="Tous"
+            options={[{ value: '1', label: 'Disponibles uniquement' }]}
+          />
         </div>
 
         {/* Results */}

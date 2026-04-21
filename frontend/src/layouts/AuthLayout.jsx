@@ -1,16 +1,12 @@
 import { Outlet } from 'react-router-dom';
 import { motion } from 'framer-motion';
+import NexoraBackground from '../components/NexoraBackground';
 import './AuthLayout.css';
 
 export default function AuthLayout() {
   return (
     <div className="auth-layout">
-      {/* Animated background */}
-      <div className="auth-bg">
-        <div className="auth-bg-orb auth-bg-orb--1" />
-        <div className="auth-bg-orb auth-bg-orb--2" />
-        <div className="auth-bg-orb auth-bg-orb--3" />
-      </div>
+      <NexoraBackground />
 
       <div className="auth-container">
         {/* Left — branding panel */}

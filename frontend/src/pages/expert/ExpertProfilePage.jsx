@@ -3,6 +3,7 @@ import { motion } from 'framer-motion';
 import { Loader2, Save, Plus, X } from 'lucide-react';
 import { useExpertProfile, useUpdateExpertProfile } from '../../hooks/useExpertPanel';
 import { useCategories } from '../../hooks/useExperts';
+import CustomSelect from '../../components/CustomSelect';
 import toast from 'react-hot-toast';
 import './ExpertProfilePage.css';
 
@@ -79,12 +80,12 @@ export default function ExpertProfilePage() {
 
             <div className="form-group">
               <label className="form-label">Catégorie</label>
-              <select className="form-input" value={categoryId} onChange={e => setCategoryId(e.target.value)}>
-                <option value="">Sélectionner...</option>
-                {categories.map(cat => (
-                  <option key={cat.id} value={cat.id}>{cat.name}</option>
-                ))}
-              </select>
+              <CustomSelect
+                value={categoryId}
+                onChange={e => setCategoryId(e.target.value)}
+                placeholder="Sélectionner..."
+                options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+              />
             </div>
 
             <div className="form-group">
